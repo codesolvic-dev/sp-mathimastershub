@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:," />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <!-- google-site-verification: filled by Vite from company API + runtime injector -->
+    <meta name="google-site-verification" content="" />
+    <!-- Early boot: Google verification + Meta Pixel from company cache -->
+    <script>
+      (function () {
+        try {
+          function applyGsc(raw) {
+            var gsc = String(raw || "").trim();
+            if (!gsc) return;
+            var m = gsc.match(/content\s*=\s*["']([^"']+)["']/i);
+            var token = (m ? m[1] : gsc).replace(/[^\w.+\/=-]/g, "");
+            if (!token) return;
+            var meta = document.querySelector('meta[name="google-site-verification"]');
+            if (!meta) {
+              meta = document.createElement("meta");
+              meta.setAttribute("name", "google-site-verification");
+              document.head.appendChild(meta);
+            }
+            meta.setAttribute("content", token);
+          }
+
+          var raw = localStorage.getItem("app_cache_company");
+          if (raw) {
+            var item = JSON.parse(raw);
+            if (item && item.data && !(item.expiresAt && Date.now() > item.expiresAt)) {
+              applyGsc(item.data.googleSiteVerification);
+              var mp = item.data.metaPixel || {};
+              var id = String(mp.pixelId || "").replace(/\D/g, "");
+              if (mp.enabled && id) {
+                !(function (f, b, e, v, n, t, s) {
+                  if (f.fbq) return;
+                  n = f.fbq = function () {
+                    n.callMethod
+                      ? n.callMethod.apply(n, arguments)
+                      : n.queue.push(arguments);
+                  };
+                  if (!f._fbq) f._fbq = n;
+                  n.push = n;
+                  n.loaded = !0;
+                  n.version = "2.0";
+                  n.queue = [];
+                  t = b.createElement(e);
+                  t.async = !0;
+                  t.src = v;
+                  s = b.getElementsByTagName(e)[0];
+                  s.parentNode.insertBefore(t, s);
+                })(
+                  window,
+                  document,
+                  "script",
+                  "https://connect.facebook.net/en_US/fbevents.js"
+                );
+                window.fbq("init", id);
+                window.fbq("track", "PageView");
+                window.__spMetaPixelId = id;
+                window.__spMetaPixelReady = true;
+              }
+            }
+          }
+
+          // Also fetch company so first visit / empty cache still gets GSC in the live DOM
+          fetch("/api/company", { credentials: "include" })
+            .then(function (r) { return r.json(); })
+            .then(function (j) {
+              if (j && j.data) applyGsc(j.data.googleSiteVerification);
+            })
+            .catch(function () {});
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script type="text/javascript">
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash,
+          );
+        }
+      })(window.location);
+    </script>
+  </body>
+</html>

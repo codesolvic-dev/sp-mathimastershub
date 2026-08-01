@@ -1,0 +1,43 @@
+{
+  "installCommand": "npm install --prefix frontend",
+  "buildCommand": "npm --prefix frontend run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    {
+      "source": "/product/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|Applebot|Googlebot|bingbot).*"
+        }
+      ],
+      "destination": "/api/product/:id"
+    },
+    {
+      "source": "/blog/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|TelegramBot|Slackbot|Discordbot|SkypeUriPreview|Applebot|Googlebot|bingbot).*"
+        }
+      ],
+      "destination": "/api/blog/:id"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|LinkedInBot|TelegramBot).*"
+        }
+      ],
+      "destination": "/api/og"
+    },
+    { "source": "/api/product/:id", "destination": "/api/product/[id]" },
+    { "source": "/api/blog/:id", "destination": "/api/blog/[id]" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
